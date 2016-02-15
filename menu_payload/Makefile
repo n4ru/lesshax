@@ -31,4 +31,4 @@ clean:
 	@echo "all cleaned up !"
 
 %.bin: %.s
-	@armips $<
+	@$(ARMIPS)/armips $<
