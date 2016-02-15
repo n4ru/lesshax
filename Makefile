@@ -3,7 +3,7 @@ $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>dev
 endif
 
 ifeq ($(strip $(CTRULIB)),)
-$(error "Please set CTRULIB in your environment. export CTRULIB=<path to>libctru")
+$(error "Please set CTRULIB in your environment. export DEVKITARM=<path to>ctrulib/libctru")
 endif
 
 ifeq ($(filter $(DEVKITARM)/bin,$(PATH)),)
@@ -54,11 +54,12 @@ SCRIPTS = "scripts"
 
 .PHONY: directories all menu_ropdb build/constants firm_constants/constants.txt cn_constants/constants.txt region_constants/constants.txt menu_ropdb/ropdb.txt cn_qr_initial_loader/cn_qr_initial_loader.bin.png cn_save_initial_loader/cn_save_initial_loader.bin cn_secondary_payload/cn_secondary_payload.bin cn_bootloader/cn_bootloader.bin menu_payload/menu_payload_regionfree.bin menu_payload/menu_payload_loadropbin.bin menu_payload/menu_ropbin.bin
 
-all: directories build/constants $(QRCODE_TARGET0) p/$(OUTNAME).bin $(QRCODE_TARGET1)
+all: directories build/constants $(QRCODE_TARGET0) p/$(OUTNAME).bin r/$(OUTNAME).bin $(QRCODE_TARGET1)
 directories:
 	@mkdir -p build && mkdir -p build/cro
 	@mkdir -p p
 	@mkdir -p q
+	@mkdir -p r
 
 menu_ropdb: $(ROPDB_TARGETS)
 
@@ -72,6 +73,11 @@ q/$(OUTNAME).png: build/cn_qr_initial_loader.bin.png
 p/$(OUTNAME).bin: $(PAYLOAD_SRCPATH)
 	@cp $(PAYLOAD_SRCPATH) p/$(OUTNAME).bin
 
+r/$(OUTNAME).bin: menu_ropbin_patcher/menu_ropbin.exe menu_payload/menu_ropbin.bin build/menu_payload_loadropbin.bin
+	@cd menu_ropbin_patcher && ./menu_ropbin.exe ../menu_payload/menu_ropbin.bin ../$@_
+	@cat $@_ build/menu_payload_loadropbin.bin > $@
+	@rm $@_
+
 firm_constants/constants.txt:
 	@cd firm_constants && make
 cn_constants/constants.txt:
@@ -83,6 +89,9 @@ menu_ropdb/ropdb.txt:
 
 build/constants: firm_constants/constants.txt cn_constants/constants.txt region_constants/constants.txt menu_ropdb/ropdb.txt
 	@python $(SCRIPTS)/makeHeaders.py $(FIRMVERSION) $(CNVERSION) $(MSETVERSION) $(ROVERSION) $(MENUVERSION) $(REGION) $(OUTNAME) build/constants $^
+
+menu_ropbin_patcher/menu_ropbin.exe:
+	@cd menu_ropbin_patcher && make
 
 build/cn_qr_initial_loader.bin.png: cn_qr_initial_loader/cn_qr_initial_loader.bin.png
 	@cp cn_qr_initial_loader/cn_qr_initial_loader.bin.png build
@@ -111,7 +120,7 @@ app_bootloader/app_bootloader.bin:
 
 
 build/cn_secondary_payload.bin: cn_secondary_payload/cn_secondary_payload.bin
-	@python $(SCRIPTS)/blowfish.py cn_secondary_payload/cn_secondary_payload.bin build/cn_secondary_payload.bin scripts
+	@python $(SCRIPTS)/blowfish.py cn_secondary_payload/cn_secondary_payload.bin build/cn_secondary_payload.bin SCRIPTS
 cn_secondary_payload/cn_secondary_payload.bin: build/cn_save_initial_loader.bin build/menu_payload_regionfree.bin build/menu_payload_loadropbin.bin build/menu_ropbin.bin
 	@mkdir -p cn_secondary_payload/data
 	@cp build/cn_save_initial_loader.bin cn_secondary_payload/data/
@@ -144,4 +153,5 @@ clean:
 	@cd menu_payload && make clean
 	@cd app_bootloader && make clean
 	@cd app_code && make clean
+	@cd menu_ropbin_patcher && make clean
 	@echo "all cleaned up !"
