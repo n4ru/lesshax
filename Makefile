@@ -1,7 +1,8 @@
 ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
-
+export CTRULIB=$(shell pwd)/libctru
+export ARMIPS=$(shell pwd)/scripts
 ifeq ($(strip $(CTRULIB)),)
 $(error "Please set CTRULIB in your environment. export DEVKITARM=<path to>ctrulib/libctru")
 endif

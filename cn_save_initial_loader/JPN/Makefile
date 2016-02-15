@@ -25,7 +25,7 @@ clean:
 -include $(DFILES)
 
 $(NAME).bin: sploit_proto.bin sploit.s cn_initial/cn_initial.bin
-	@armips sploit.s
+	@$(ARMIPS)/armips sploit.s
 	@python $(SCRIPTS)/obfuscator5000.py $<
 
 cn_initial/cn_initial.bin:
