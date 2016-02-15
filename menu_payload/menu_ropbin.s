@@ -348,7 +348,7 @@ DUMMY_PTR equ (WAITLOOP_DST - 4)
 	rop: ; real ROP starts here
 
 		; debug
-			writehwreg 0x202A04, 0x01FFFFFF
+			;writehwreg 0x202A04, 0x01FFFFFF
 
 		; send app parameter
 			apt_open_session 0
@@ -390,11 +390,11 @@ DUMMY_PTR equ (WAITLOOP_DST - 4)
 			apt_close_session 0
 
 			; wait_for_parameter 0x101
-			sleep 100*1000*1000, 0x00000000
+			;sleep 100*1000*1000, 0x00000000
 
-			apt_open_session 0
-			apt_send_parameter 0x101, MENU_LOADEDROP_BUFADR + irrstString, 0x8, MENU_IRRST_HANDLE
-			apt_close_session 0
+			;apt_open_session 0
+			;apt_send_parameter 0x101, MENU_LOADEDROP_BUFADR + irrstString, 0x8, MENU_IRRST_HANDLE
+			;apt_close_session 0
 
 			; wait_for_parameter 0x101
 			sleep 100*1000*1000, 0x00000000
@@ -450,10 +450,10 @@ DUMMY_PTR equ (WAITLOOP_DST - 4)
 	fsUserString:
 		.ascii "fs:USER"
 		.byte 0x00
-	irrstString:
-		.ascii "ir:rst"
-		.byte 0x00
-		.byte 0x00
+	;irrstString:
+	;	.ascii "ir:rst"
+	;	.byte 0x00
+	;	.byte 0x00
 	amsysString:
 		.ascii "am:sys"
 		.byte 0x00

@@ -48,8 +48,8 @@ void gspGpuInit()
 	GSPGPU_SetLcdForceBlack(NULL, 0x0);
 
 	//set subscreen to blue
-	u32 regData=0x01FF0000;
-	GSPGPU_WriteHWRegs(NULL, 0x202A04, &regData, 4);
+	//u32 regData=0x01FF0000;
+	//GSPGPU_WriteHWRegs(NULL, 0x202A04, &regData, 4);
 
 	//setup our gsp shared mem section
 	u8 threadID;
@@ -111,15 +111,15 @@ void hex2str(char* out, u32 val)
 
 void renderString(char* str, int x, int y)
 {
-	drawString(top_framebuffer,str,x,y);
-	GSPGPU_FlushDataCache(NULL, top_framebuffer, 240*400*3);
+	//drawString(top_framebuffer,str,x,y);
+	//GSPGPU_FlushDataCache(NULL, top_framebuffer, 240*400*3);
 }
 
 void centerString(char* str, int y)
 {
-	int x=200-(strlen(str)*4);
-	drawString(top_framebuffer,str,x,y);
-	GSPGPU_FlushDataCache(NULL, top_framebuffer, 240*400*3);
+	//int x=200-(strlen(str)*4);
+	//drawString(top_framebuffer,str,x,y);
+	//GSPGPU_FlushDataCache(NULL, top_framebuffer, 240*400*3);
 }
 
 void drawHex(u32 val, int x, int y)
@@ -139,7 +139,7 @@ void clearScreen(u8 shade)
 void drawTitleScreen(char* str)
 {
 	clearScreen(0x00);
-	centerString("debug",0);
+	centerString("lesshax 1.0b",0);
 	centerString(BUILDTIME,10);
 	renderString(str, 0, 40);
 }
@@ -185,7 +185,7 @@ typedef struct {
 	struct {
 		char name[8];
 		Handle handle;
-	} services[4];
+	} services[3];
 } nonflexible_service_list_t;
 
 Handle _aptLockHandle, _aptuHandle;
@@ -344,7 +344,7 @@ void receive_handle(Handle* out)
 void _main()
 {
 	Result ret;
-	Handle hbSpecialHandle, fsuHandle, nssHandle, irrstHandle, amsysHandle;
+	Handle hbSpecialHandle, fsuHandle, nssHandle, /*irrstHandle,*/ amsysHandle;
 
 	initSrv();
 	srv_RegisterClient(NULL);
@@ -363,7 +363,7 @@ void _main()
 
 	receive_handle(&fsuHandle);
 	receive_handle(&nssHandle);
-	receive_handle(&irrstHandle);
+	//receive_handle(&irrstHandle);
 	receive_handle(&amsysHandle);
 
 	// print_str("\nconnecting to hb:SPECIAL...\n");
@@ -386,7 +386,7 @@ void _main()
 	svc_sleepThread(100*1000*1000);
 
 	// setup service list structure
-	*(nonflexible_service_list_t*)(&gspHeap[0x00100000] + 0x4 * 8) = (nonflexible_service_list_t){4, {{"ns:s", nssHandle}, {"fs:USER", fsuHandle}, {"ir:rst", irrstHandle}, {"am:sys", amsysHandle}}};
+	*(nonflexible_service_list_t*)(&gspHeap[0x00100000] + 0x4 * 8) = (nonflexible_service_list_t){4, {{"ns:s", nssHandle}, {"fs:USER", fsuHandle}, /*{"ir:rst", irrstHandle},*/ {"am:sys", amsysHandle}}};
 
 	// flush and copy
 	GSPGPU_FlushDataCache(NULL, (u8*)&gspHeap[0x00100000], 0x00005000);

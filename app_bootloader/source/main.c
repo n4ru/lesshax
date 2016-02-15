@@ -29,8 +29,8 @@ void gspGpuInit()
 	GSPGPU_AcquireRight(NULL, 0x0);
 
 	//set subscreen to red
-	u32 regData=0x010000FF;
-	GSPGPU_WriteHWRegs(NULL, 0x202A04, &regData, 4);
+	//u32 regData=0x010000FF;
+	//GSPGPU_WriteHWRegs(NULL, 0x202A04, &regData, 4);
 
 	//setup our gsp shared mem section
 	u8 threadID;
@@ -450,7 +450,7 @@ void runHbmenu()
 	Handle fileHandle;
 	FS_archive sdmcArchive = (FS_archive){0x9, (FS_path){PATH_EMPTY, 1, (u8*)""}};
 	// FS_path filePath = (FS_path){PATH_CHAR, 18, (u8*)"/3ds_hb_menu.3dsx"};
-	FS_path filePath = (FS_path){PATH_CHAR, 11, (u8*)"/boot.3dsx"};
+	FS_path filePath = (FS_path){PATH_CHAR, 11, (u8*)"/less.3dsx"};
 	Result ret = FSUSER_OpenFileDirectly(fsuHandle, &fileHandle, sdmcArchive, filePath, FS_OPEN_READ, FS_ATTRIBUTE_NONE);
 
 	run3dsx(fileHandle, NULL);
