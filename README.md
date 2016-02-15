@@ -36,7 +36,7 @@ Once you're set, simply run `build.sh` and you should get six binaries in the `p
  - smea for original ROP and code.
  - ihaveamac and Mrrraou for the idea of removing debug information and unused services.
  - yellows8, plutoo
-###
+ 
    [python 2.7]: <https://www.python.org/download/releases/2.7/>
    [devkitARM]: <https://sourceforge.net/projects/devkitpro/files/devkitARM/devkitARM_r45>
    [blowfish_processed.bin]: <https://www.google.com/search?q=blowfish_processed.bin+33f38ab6f0821bc64b6f6bf98c1494f0>
