@@ -351,41 +351,6 @@ Result _APT_CloseApplication(Handle* handle, u32 a, u32 b, u32 c)
 const u32 customProcessBuffer[0x200] = {0xBABE0006};
 memorymap_t* const customProcessMap = (memorymap_t*)customProcessBuffer;
 
-memorymap_t* getMmapArgbuf(u32* argbuffer, u32 argbuffer_length)
-{
-	u32 mmap_offset = (4 + strlen((char*)&argbuffer[1]) + 1);
-	int i; for(i=1; i<argbuffer[0]-1; i++) mmap_offset += strlen(&((char*)argbuffer)[mmap_offset]) + 1;
-	mmap_offset = (mmap_offset + 0x3) & ~0x3;
-	return (memorymap_t*)((u32)argbuffer + mmap_offset);
-}
-
-void patchMenuRop(int processId, u32* argbuf, u32 argbuflength)
-{
-	// grab un-processed backup ropbin
-	GSPGPU_FlushDataCache(NULL, (u8*)&gspHeap[0x00100000], 0x8000);
-	doGspwn((u32*)MENU_LOADEDROP_BKP_BUFADR, (u32*)&gspHeap[0x00100000], 0x8000);
-	svc_sleepThread(50*1000*1000);
-
-	// patch it
-	if(processId == -2 && argbuf && argbuf[0] >= 2)
-	{
-		memorymap_t* mmap = getMmapArgbuf(argbuf, argbuflength);
-		patchPayload((u32*)&gspHeap[0x00100000], processId, mmap);
-	}else patchPayload((u32*)&gspHeap[0x00100000], processId, NULL);
-
-	// copy it to destination
-	GSPGPU_FlushDataCache(NULL, (u8*)&gspHeap[0x00100000], 0x8000);
-	doGspwn((u32*)&gspHeap[0x00100000], (u32*)MENU_LOADEDROP_BUFADR, 0x8000);
-	svc_sleepThread(50*1000*1000);	
-
-	// copy parameter block
-	if(argbuf)memcpy(&gspHeap[0x00200000], argbuf, argbuflength);
-	else memset(&gspHeap[0x00200000], 0x00, MENU_PARAMETER_SIZE);
-	GSPGPU_FlushDataCache(NULL, (u8*)&gspHeap[0x00200000], MENU_PARAMETER_SIZE);
-	doGspwn((u32*)&gspHeap[0x00200000], (u32*)(MENU_PARAMETER_BUFADR), MENU_PARAMETER_SIZE);
-	svc_sleepThread(20*1000*1000);
-}
-
 void run3dsx(Handle executable, u32* argbuf)
 {
 	initSrv();
@@ -394,14 +359,6 @@ void run3dsx(Handle executable, u32* argbuf)
 	// free extra data pages if any
 	freeDataPages(0x14000000);
 	freeDataPages(0x30000000);
-
-	// reset menu ropbin (in case of a crash)
-	{
-		u32 _argbuf = 0;
-		svc_controlMemory((u32*)&gspHeap, 0x0, 0x0, 0x01000000, 0x10003, 0x3);
-		patchMenuRop(1, &_argbuf, 4);
-		svc_controlMemory((u32*)&gspHeap, (u32)gspHeap, 0x0, 0x01000000, MEMOP_FREE, 0x0);
-	}
 
 	// duplicate service list on the stack
 	// also add hid:SPVR as hid:USER if appropriate
@@ -512,8 +469,6 @@ void changeProcess(int processId, u32* argbuf, u32 argbuflength)
 
 	// allocate gsp heap
 	svc_controlMemory((u32*)&gspHeap, 0x0, 0x0, 0x01000000, 0x10003, 0x3);
-
-	patchMenuRop(processId, argbuf, argbuflength);
 
 	// grab un-processed backup ropbin
 	GSPGPU_FlushDataCache(NULL, (u8*)&gspHeap[0x00100000], 0x8000);
