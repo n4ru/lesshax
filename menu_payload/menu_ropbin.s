@@ -404,10 +404,10 @@ DUMMY_PTR equ (WAITLOOP_DST - 4)
 			apt_close_session 0
 
 		; memcpy wait loop to destination
-			memcpy WAITLOOP_DST, (MENU_OBJECT_LOC+waitLoop_start-object), (waitLoop_end-waitLoop_start)
+			;memcpy WAITLOOP_DST, (MENU_OBJECT_LOC+waitLoop_start-object), (waitLoop_end-waitLoop_start)
 
 		; jump to wait loop
-			jump_sp WAITLOOP_DST
+			;jump_sp WAITLOOP_DST
 
 		; sleep for ever and ever (just in case)
 			sleep 0xffffffff, 0x0fffffff
