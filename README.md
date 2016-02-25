@@ -1,5 +1,4 @@
 ![lesshax](http://n4ru.it/3ds/lesshax.png)
-## lesshax 1.0b
 
 **lesshax** is a 3DS 9.0/9.2 payload based on smealum's ninjhax 2.x that has been modified specifically to boot into Custom Firmware such as rxTools, ReiNAND, or CakesFW. It was designed with three goals in mind:
 
