@@ -32,7 +32,10 @@ The repo contains the majority of what you need to build the payload, aside from
 * **[devkitARM]** - Download and `export DEVKITARM=<pathto>/devkitARM`
 * **[blowfish_processed.bin]** - place into `scripts` folder.
 
-Once you're set, simply run `build.sh` and you should get six binaries in the `payloads` folder - Two Per Region (old 3ds / new 3ds) and Three Regions total (USA / EUR / JPN).
+Once you're set, simply run `build.sh` and you should get twelve binaries in the `payloads` folder for the following configurations:
+ - o3DS / n3DS
+ - 9.0 / 9.2
+ - USA / EUR / JPN
 
 ### Credits
 
